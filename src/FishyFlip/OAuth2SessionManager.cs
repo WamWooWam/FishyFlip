@@ -26,7 +26,7 @@ internal class OAuth2SessionManager : ISessionManager
     private ILogger? logger;
     private ATProtocol protocol;
     private Session? session;
-    private RefreshTokenDelegatingHandler? delegatingHandler;
+    private ProofTokenMessageHandler? delegatingHandler;
     private string? proofKey;
 
     /// <summary>
@@ -81,7 +81,7 @@ internal class OAuth2SessionManager : ISessionManager
         //    GetClientAssertionAsync = this.protocol.Options.GetClientAssertionAsync,
         // };
         this.proofKey = session.ProofKey;
-        this.client = this.protocol.Options.GenerateHttpClient(protocol: this.protocol, new ProofTokenMessageHandler(this.proofKey, new HttpClientHandler()));
+        this.delegatingHandler = new ProofTokenMessageHandler(this.proofKey, new HttpClientHandler());
 
         if (this.proofKey is null)
         {
@@ -194,8 +194,9 @@ internal class OAuth2SessionManager : ISessionManager
         }
 
         var session = new Session(describeRepo!.Did!, describeRepo.DidDoc, describeRepo.Handle!, null, result.AccessToken, result.RefreshToken, result.AccessTokenExpiration.DateTime);
-        this.delegatingHandler = (RefreshTokenDelegatingHandler)result.RefreshTokenHandler;
-        this.delegatingHandler.TokenRefreshed += this.DelegatingHandler_TokenRefreshed;
+
+        // this.delegatingHandler = (RefreshTokenDelegatingHandler)result.RefreshTokenHandler;
+        // this.delegatingHandler.TokenRefreshed += this.DelegatingHandler_TokenRefreshed;
         this.SetSession(session);
 
         return session;
@@ -317,7 +318,7 @@ internal class OAuth2SessionManager : ISessionManager
             {
                 if (this.delegatingHandler is not null)
                 {
-                    this.delegatingHandler.TokenRefreshed -= this.DelegatingHandler_TokenRefreshed;
+                    // this.delegatingHandler.TokenRefreshed -= this.DelegatingHandler_TokenRefreshed;
                 }
 
                 this.delegatingHandler?.Dispose();
