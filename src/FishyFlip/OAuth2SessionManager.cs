@@ -71,35 +71,36 @@ internal class OAuth2SessionManager : ISessionManager
     public async Task<Result<AuthSession?>> StartSessionAsync(AuthSession session, string clientId, string? instanceUrl = default, CancellationToken cancellationToken = default)
 #pragma warning restore CS1998
     {
-        instanceUrl ??= Constants.Urls.ATProtoServer.SocialApi;
-        var options = new OidcClientOptions
-        {
-            Authority = instanceUrl,
-            ClientId = clientId,
-            LoadProfile = false,
-        };
+        // instanceUrl ??= Constants.Urls.ATProtoServer.SocialApi;
 
+        // var options = new OidcClientOptions
+        // {
+        //    Authority = instanceUrl,
+        //    ClientId = clientId,
+        //    LoadProfile = false,
+        //    GetClientAssertionAsync = this.protocol.Options.GetClientAssertionAsync,
+        // };
         this.proofKey = session.ProofKey;
+        this.client = this.protocol.Options.GenerateHttpClient(protocol: this.protocol, new ProofTokenMessageHandler(this.proofKey, new HttpClientHandler()));
 
         if (this.proofKey is null)
         {
             return new ATError(new OAuth2Exception("ProofKey is null. This must be set from the previous session."));
         }
 
-        if (string.IsNullOrEmpty(session.Session.RefreshJwt))
-        {
-            return new ATError(new OAuth2Exception("RefreshJwt is null. This must be set from the previous session."));
-        }
+        // if (string.IsNullOrEmpty(session.Session.RefreshJwt))
+        // {
+        //    return new ATError(new OAuth2Exception("RefreshJwt is null. This must be set from the previous session."));
+        // }
 
-        options.ConfigureDPoP(this.proofKey);
-        this.oidcClient = new OidcClient(options);
-        this.oidcClient.Options.Policy.Discovery.DiscoveryDocumentPath = ".well-known/oauth-authorization-server";
+        // options.ConfigureDPoP(this.proofKey);
+        // this.oidcClient = new OidcClient(options);
+        // this.oidcClient.Options.Policy.Discovery.DiscoveryDocumentPath = ".well-known/oauth-authorization-server";
 
-        var handler = this.oidcClient.CreateDPoPHandler(this.proofKey, session.Session.RefreshJwt);
+        // var handler = this.oidcClient.CreateDPoPHandler(this.proofKey, session.Session.RefreshJwt);
 
-        this.delegatingHandler = (RefreshTokenDelegatingHandler)handler;
-        this.delegatingHandler.TokenRefreshed += this.DelegatingHandler_TokenRefreshed;
-
+        // this.delegatingHandler = (RefreshTokenDelegatingHandler)handler;
+        // this.delegatingHandler.TokenRefreshed += this.DelegatingHandler_TokenRefreshed;
         this.SetSession(session.Session);
         return session;
     }

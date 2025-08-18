@@ -3,6 +3,7 @@
 // </copyright>
 
 using System.Security.Cryptography.X509Certificates;
+using Duende.IdentityModel.Client;
 using FishyFlip.Tools.Json;
 
 namespace FishyFlip;
@@ -218,6 +219,17 @@ public class ATProtocolBuilder
             this.atProtocolOptions.DidCache[item.Key.ToString()] = item.Value.ToString();
         }
 
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a Client Assertion handler for server side OAuth.
+    /// </summary>
+    /// <param name="clientAssertionHandler">Handler to use.</param>
+    /// <returns><see cref="ATProtocolBuilder"/>.</returns>
+    public ATProtocolBuilder WithClientAssertionHandler(Func<Task<ClientAssertion>> clientAssertionHandler)
+    {
+        this.atProtocolOptions.GetClientAssertionAsync = clientAssertionHandler;
         return this;
     }
 

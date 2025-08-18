@@ -2,6 +2,7 @@
 // Copyright (c) Drastic Actions. All rights reserved.
 // </copyright>
 
+using Duende.IdentityModel.Client;
 using FishyFlip.Lexicon.App.Bsky.Actor;
 using FishyFlip.Lexicon.Com.Atproto.Identity;
 

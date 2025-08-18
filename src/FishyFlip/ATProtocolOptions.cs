@@ -2,9 +2,10 @@
 // Copyright (c) Drastic Actions. All rights reserved.
 // </copyright>
 
-using FishyFlip.Tools.Json;
 using System.Collections.Concurrent;
 using System.Net;
+using Duende.IdentityModel.Client;
+using FishyFlip.Tools.Json;
 
 namespace FishyFlip;
 
@@ -92,6 +93,16 @@ public class ATProtocolOptions
     /// Gets the Ozone Proxy Header.
     /// </summary>
     public string OzoneProxyHeader { get; internal set; } = string.Empty;
+
+    /// <summary>
+    /// Gets a ClientAssertion for server side OAuth.
+    /// </summary>
+    public Func<Task<ClientAssertion>>? GetClientAssertionAsync { get; internal set; } = null;
+
+    /// <summary>
+    /// Gets a HttpMessageHandler for server side OAuth.
+    /// </summary>
+    public Func<HttpMessageHandler>? GetHttpMessageHandler { get; internal set; } = null;
 
     /// <summary>
     /// Gets the Did Cache.
